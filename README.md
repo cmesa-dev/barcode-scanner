@@ -22,9 +22,11 @@ Retail operators need to record high-frequency inventory movements with very lit
 - Responsive React and TypeScript terminal interface.
 - REST API implemented with Node.js.
 - SQLite persistence with transactional inventory movements.
+- Demo authentication with operator, manager and read-only auditor roles.
 - Sale and restock flows with validation and explicit out-of-stock rejection.
+- Keyboard-scanner input plus optional browser camera barcode capture where supported.
 - Recent activity audit trail and low-stock status indicators.
-- Automated domain and API tests, CI workflow and Docker image.
+- Automated domain, API and UI tests, Lighthouse quality gates, CI workflow, Docker image and deployable hosted preview.
 
 ## Architecture
 
@@ -35,6 +37,14 @@ React + TypeScript UI  ->  JSON REST API (Node.js)  ->  SQLite
 The browser app reads the dashboard from the API and submits operational events. Each accepted scan updates stock and records its resulting state in a single transaction.
 
 Read the design decisions in [docs/architecture.md](docs/architecture.md).
+
+## Hosted Preview
+
+Once GitHub Pages is enabled for this repository, the hosted interaction preview is published at:
+
+[`https://cmesa-dev.github.io/barcode-scanner/`](https://cmesa-dev.github.io/barcode-scanner/)
+
+GitHub Pages runs the same frontend with synthetic browser-local data. The Node.js and SQLite implementation is exercised locally or through the Docker container, because static hosting cannot operate the API service.
 
 ## Run Locally
 
@@ -52,6 +62,14 @@ npm run dev
 ```
 
 Open `http://localhost:5173`.
+
+Demo accounts:
+
+```text
+operator@scanops.demo / demo-operator
+manager@scanops.demo  / demo-manager
+auditor@scanops.demo  / demo-auditor   (read only)
+```
 
 ### Production-style run
 
@@ -75,14 +93,14 @@ docker run --rm -p 3000:3000 scanops-demo
 npm run check
 ```
 
-The test suite covers seeded metrics, stock decrement/increment behavior, rejection of impossible sales and HTTP API responses. The build performs TypeScript validation before generating the frontend assets.
+The test suite covers seeded metrics, stock decrement/increment behavior, access control, rejection of impossible sales, HTTP API responses and the frontend login/operation workflow. The build performs TypeScript validation before generating frontend assets. The CI workflow runs Lighthouse against the static build with enforceable accessibility and best-practice thresholds.
 
 ## Scope Boundary
 
 | Included publicly | Deliberately outside this demo |
 |---|---|
 | Operational UI, sample catalogue, REST API, SQLite events, tests | Private product code and data |
-| Sale/restock flows and audit list | Device authentication and multi-store access |
+| Demo sessions, role enforcement, sale/restock flows and audit list | Production identity provider and multi-store tenant model |
 | Container and CI verification | Production deployment and monitoring |
 
 ## Next Production Iteration

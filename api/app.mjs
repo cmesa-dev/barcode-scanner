@@ -1,5 +1,6 @@
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
+import { createAuth } from "./auth.mjs";
 import { StoreError } from "./store.mjs";
 
 const CONTENT_TYPES = {
@@ -53,7 +54,12 @@ function serveAsset(response, distDir, urlPath) {
   return true;
 }
 
-export function createHandler(store, { distDir } = {}) {
+function bearerToken(request) {
+  const authorization = request.headers?.authorization ?? "";
+  return authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+}
+
+export function createHandler(store, { distDir, auth = createAuth() } = {}) {
   return async function handler(request, response) {
     try {
       if (request.method === "OPTIONS") {
@@ -67,10 +73,27 @@ export function createHandler(store, { distDir } = {}) {
       if (request.method === "GET" && request.url === "/api/health") {
         return json(response, 200, { status: "ok" });
       }
+      if (request.method === "POST" && request.url === "/api/session") {
+        const { email, password } = await requestJson(request);
+        const session = auth.signIn(email, password);
+        if (!session) throw new StoreError("Invalid demo credentials.", 401);
+        return json(response, 201, session);
+      }
+      if (request.method === "DELETE" && request.url === "/api/session") {
+        auth.signOut(bearerToken(request));
+        return json(response, 200, { status: "signed-out" });
+      }
+      const user = auth.userFor(bearerToken(request));
+      if ((request.url === "/api/dashboard" || request.url === "/api/scans") && !user) {
+        throw new StoreError("Sign in is required.", 401);
+      }
       if (request.method === "GET" && request.url === "/api/dashboard") {
-        return json(response, 200, store.dashboard());
+        return json(response, 200, { ...store.dashboard(), user });
       }
       if (request.method === "POST" && request.url === "/api/scans") {
+        if (!["operator", "manager"].includes(user.role)) {
+          throw new StoreError("This role cannot record movements.", 403);
+        }
         const { barcode, mode } = await requestJson(request);
         if (typeof barcode !== "string" || barcode.trim() === "") {
           throw new StoreError("Barcode is required.", 400);
