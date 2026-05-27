@@ -1,104 +1,90 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f2027,100:203a43&height=200&section=header&text=Barcode%20Scanner&fontSize=55&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Smart+inventory+%26+barcode+management+system&descAlignY=56&descAlign=50" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:071a1e,100:11675f&height=190&section=header&text=ScanOps&fontSize=62&fontColor=ffffff&animation=fadeIn&fontAlignY=39&desc=Inventory%20Terminal%20%C2%B7%20Public%20Engineering%20Demo&descAlignY=57" width="100%"/>
 </div>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Estado-Completado-success?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
-  <img src="https://img.shields.io/badge/Web_App-✓-blue?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Licencia-Privada-red?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/React-TypeScript-087EA4?style=for-the-badge&logo=react&logoColor=white"/>
+  <img src="https://img.shields.io/badge/API-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Data-SQLite-0F80CC?style=for-the-badge&logo=sqlite&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Original%20Project-Private-334155?style=for-the-badge"/>
 </div>
 
----
+## Problem
 
-## 📦 ¿Qué es Barcode Scanner?
+Retail operators need to record high-frequency inventory movements with very little friction: scan a product, identify whether stock is leaving or arriving, and see the resulting state immediately.
 
-Sistema web de **escaneo y gestión de códigos de barras** diseñado para entornos empresariales. Permite gestionar inventario, registrar entradas/salidas de productos y generar reportes en tiempo real, todo desde el navegador — sin instalación.
+**ScanOps** is a sanitized public product slice derived from that operational problem. It contains synthetic data only and does not disclose source code or data from the private original project.
 
----
+![ScanOps inventory terminal preview](docs/scanops-preview.png)
 
-## ✨ Funcionalidades
+## What I Built
 
-| Feature | Descripción |
-|---|---|
-| 📸 **Escaneo en vivo** | Usa la cámara del dispositivo para leer códigos QR y EAN |
-| 🗄️ **Base de datos** | Registro de productos con nombre, precio, stock y categoría |
-| 📊 **Dashboard** | Panel con métricas de inventario en tiempo real |
-| 📥 **Entradas/Salidas** | Registro de movimientos con historial completo |
-| 📄 **Exportación** | Generación de reportes en CSV y PDF |
-| 🔔 **Alertas** | Notificaciones automáticas de stock mínimo |
-| 📱 **Responsive** | Funciona en móvil, tablet y escritorio |
+- Responsive React and TypeScript terminal interface.
+- REST API implemented with Node.js.
+- SQLite persistence with transactional inventory movements.
+- Sale and restock flows with validation and explicit out-of-stock rejection.
+- Recent activity audit trail and low-stock status indicators.
+- Automated domain and API tests, CI workflow and Docker image.
 
----
+## Architecture
 
-## 🏗️ Arquitectura del Sistema
-
-```
-┌──────────────────────────────────────────────────────┐
-│                   CLIENTE (Browser)                   │
-│                                                      │
-│  ┌─────────────┐   ┌─────────────┐  ┌────────────┐  │
-│  │   Scanner   │   │  Dashboard  │  │  Reportes  │  │
-│  │  (Cámara)   │   │   Panel     │  │  & Export  │  │
-│  └──────┬──────┘   └──────┬──────┘  └─────┬──────┘  │
-│         └────────────┬────┘               │         │
-│                      ▼                    │         │
-│              ┌──────────────┐             │         │
-│              │   API Layer  │◀────────────┘         │
-│              └──────┬───────┘                       │
-└─────────────────────┼────────────────────────────────┘
-                      │ REST API
-┌─────────────────────▼────────────────────────────────┐
-│                    SERVIDOR                           │
-│                                                      │
-│  ┌─────────────┐   ┌─────────────┐  ┌────────────┐  │
-│  │  Productos  │   │  Movimientos│  │  Usuarios  │  │
-│  │  Service    │   │  Service    │  │  Auth      │  │
-│  └─────────────┘   └─────────────┘  └────────────┘  │
-│                         │                            │
-│              ┌──────────▼──────────┐                 │
-│              │      Base de Datos  │                 │
-│              └─────────────────────┘                 │
-└──────────────────────────────────────────────────────┘
+```text
+React + TypeScript UI  ->  JSON REST API (Node.js)  ->  SQLite
 ```
 
----
+The browser app reads the dashboard from the API and submits operational events. Each accepted scan updates stock and records its resulting state in a single transaction.
 
-## 🚀 Demo Interactiva
+Read the design decisions in [docs/architecture.md](docs/architecture.md).
 
-> ⚠️ El archivo `demo/index.html` contiene una demo funcional con datos de ejemplo.
-> El código de producción y la lógica empresarial son privados.
+## Run Locally
+
+Requires Node.js 22.5 or later because the API uses the built-in SQLite module.
 
 ```bash
-# Clonar y abrir la demo
-git clone https://github.com/cmesa-dev/barcode-scanner
-cd barcode-scanner/demo
-open index.html   # macOS
-xdg-open index.html  # Linux
+npm install
+npm run api
 ```
 
-**La demo incluye:**
-- ✅ Escáner simulado con productos de ejemplo
-- ✅ Dashboard con métricas ficticias
-- ✅ Interfaz completa (sin backend real)
+In a second terminal:
 
----
+```bash
+npm run dev
+```
 
-## 🛠️ Stack Tecnológico
+Open `http://localhost:5173`.
 
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-43853D?style=flat-square&logo=node.js&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white)
+### Production-style run
 
----
+```bash
+npm run build
+npm start
+```
 
-## 📬 Contacto
+Open `http://localhost:3000`.
 
-[![Email](https://img.shields.io/badge/kmevi32@gmail.com-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:kmevi32@gmail.com)
-[![LinkedIn](https://img.shields.io/badge/Carlos_Mesa_Viera-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/carlosmesaviera)
+### Container
 
-<div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:203a43,100:0f2027&height=100&section=footer" width="100%"/>
-</div>
+```bash
+docker build -t scanops-demo .
+docker run --rm -p 3000:3000 scanops-demo
+```
+
+## Verification
+
+```bash
+npm run check
+```
+
+The test suite covers seeded metrics, stock decrement/increment behavior, rejection of impossible sales and HTTP API responses. The build performs TypeScript validation before generating the frontend assets.
+
+## Scope Boundary
+
+| Included publicly | Deliberately outside this demo |
+|---|---|
+| Operational UI, sample catalogue, REST API, SQLite events, tests | Private product code and data |
+| Sale/restock flows and audit list | Device authentication and multi-store access |
+| Container and CI verification | Production deployment and monitoring |
+
+## Next Production Iteration
+
+For a deployed multi-terminal system I would add authenticated device identities, idempotent event ingestion, role-based access, offline synchronisation, migrations, monitoring and backup/restore procedures.
