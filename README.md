@@ -7,6 +7,8 @@
   <img src="https://img.shields.io/badge/API-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white"/>
   <img src="https://img.shields.io/badge/Data-SQLite-0F80CC?style=for-the-badge&logo=sqlite&logoColor=white"/>
   <img src="https://img.shields.io/badge/Original%20Project-Private-334155?style=for-the-badge"/>
+  <br/>
+  <a href="README.es.md">🇪🇸 Español</a>
 </div>
 
 ## Problem
